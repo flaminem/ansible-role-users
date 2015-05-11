@@ -18,8 +18,7 @@
 - name: User creation
   user: >
         name="{{item.username}}"
-        group="{{item.group| default(item.username if users_create_per_user_group
-            else users_group)}}"
+        group="{{item.group| default(item.username if users_create_per_user_group else users_group)}}"
         groups="{{item.groups | join(',')}}"
         append="{{users_append_groups}}"
         shell={{item.shell if item.shell is defined else users_default_shell}}
@@ -70,3 +69,22 @@
         password="{{ lookup('password', users_root_password_file+' chars='+users_root_password_chars+' encrypt='+users_root_password_encrypt+' length='+users_root_password_length) }}"
   when: users_root_random_password
   tags: ['users','configuration']
+
+- name: Look for any skeleton files
+  command: echo {{item}}
+  with_fileglob: users_skeleton_path
+  register: users_skeleton_files
+  when: users_skeleton_path is defined and users_create_homedirs
+  tags: ['users','configuration', 'mymy']
+
+- name: Ensure skeleton is installed
+  copy: src={{item.1.item}}
+        dest=/home/{{item.0.username}}/.
+        owner={{item.0.username}}
+        group={{item.0.username}}
+        mode=0600
+  with_nested: 
+    - users
+    - users_skeleton_files.results
+  when: users_skeleton_files is defined
+  tags: ['users','configuration', 'mymy']
