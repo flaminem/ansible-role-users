@@ -70,6 +70,13 @@
   when: users_root_random_password
   tags: ['users','configuration']
 
+- name: Look for any skeleton files
+  command: echo {{item}}
+  with_fileglob: users_skeleton_path
+  register: users_skeleton_files
+  when: users_skeleton_path is defined and users_create_homedirs
+  tags: ['users','configuration']
+
 - name: Ensure skeleton is installed
   copy: src={{item.1.item}}
         dest=/home/{{item.0.username}}/.
