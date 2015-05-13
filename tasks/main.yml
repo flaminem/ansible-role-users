@@ -86,7 +86,7 @@
   with_nested: 
     - users
     - users_skeleton_files.results
-  when: users_skeleton_files is defined
+  when: users_skeleton_files is defined and not (users_skeleton_files | skipped)
   tags: ['users','configuration']
 
 
