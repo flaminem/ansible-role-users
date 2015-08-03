@@ -35,7 +35,7 @@
   with_subelements:
     - users
     - ssh_key
-  tags: ['users','configuration']
+  tags: ['users','configuration', 'acl']
 
 - name: Remove revoked SSH keys
   authorized_key: >
@@ -75,7 +75,7 @@
   with_fileglob: users_skeleton_path
   register: users_skeleton_files
   when: users_skeleton_path is defined and users_create_homedirs
-  tags: ['users','configuration']
+  tags: ['users','configuration', 'skeleton']
 
 - name: Ensure skeleton is installed
   copy: src={{item.1.item}}
@@ -87,6 +87,6 @@
     - users
     - users_skeleton_files.results
   when: users_skeleton_files is defined and not (users_skeleton_files | skipped)
-  tags: ['users','configuration']
+  tags: ['users','configuration', 'skeleton']
 
 
