@@ -38,7 +38,7 @@
   with_subelements:
     - "{{ users }}"
     - ssh_key
-  tags: ['users','configuration', 'acl']
+  tags: ['users','configuration', 'ssh_key']
 
 - name: Remove revoked SSH keys
   authorized_key: >
@@ -48,7 +48,7 @@
   with_nested:
     - "{{ users }}"
     - "{{ users_revoked_ssh_key }}"
-  tags: ['users','configuration']
+  tags: ['users','configuration', 'ssh_key']
 
 - name: Deleted user removal
   user: >
@@ -89,7 +89,7 @@
         group={{item.0.username}}
         mode=0600
   with_nested: 
-    - users
+    - "{{users}}"
     - users_skeleton_files.results
   when: users_skeleton_files is defined and not (users_skeleton_files | skipped)
   tags: ['users','configuration', 'skeleton']
